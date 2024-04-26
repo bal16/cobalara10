@@ -9,7 +9,7 @@
             @csrf
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title"
+                <input type="text" onchange="makeSlug()" class="form-control @error('title') is-invalid @enderror" id="title" name="title"
                     value="{{ old('title') }}">
                 @error('title')
                     <div class="invalid-feedback">
@@ -65,20 +65,24 @@
         </form>
     </div>
     <script>
-        const title = document.querySelector('#title');
-        const slug = document.querySelector('#slug');
-        title.addEventListener('change', function() {
-            fetch('/dashboard/checkSlug?title=' + title.value)
-                .then(response => response.json())
-                .then(data => slug.value = data.slug)
-            // .then(data => slug.value = data.slug)
-        })
+        function makeSlug() {
+            const title = document.getElementById('title')
+            const slug = document.getElementById('slug')
+            if(title.value){
+                fetch('/dashboard/makeSlug?title=' + title.value)
+                    .then(response => response.json())
+                    .then(data => slug.value = data.slug)
+                    // .then(data => slug.value = data.slug)
+            } else slug.value = ''
+
+        }
 
         document.addEventListener('trix-file-acccept', (e) => {
             e.preventDefault();
         })
+
         const previewImage = () => {
-            const image = document.querySelector('#image');
+            const image = document.getElementById('image');
             const imgPreview = document.querySelector('.img-preview');
 
             imgPreview.style.display = 'block';
